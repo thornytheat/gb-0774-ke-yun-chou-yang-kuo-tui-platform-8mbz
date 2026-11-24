@@ -17,3 +17,27 @@ save?.addEventListener('click', async () => {
     message.textContent = `${error.message}，请重试。`;
   } finally { save.disabled = false; }
 });
+
+const adopt = document.querySelector('#adopt-run');
+adopt?.addEventListener('click', async () => {
+  const message = document.querySelector('#adoption-feedback');
+  const { base, corrected, departed } = adopt.dataset;
+  const layers = departed ? departed.split(',').filter(Boolean) : [];
+  adopt.disabled = true;
+  message.textContent = '接用中…';
+  try {
+    const res = await fetch('/api/adoption', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ base, corrected, departed: layers }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || '接用失败');
+    const groups = data.applied.map(item => item.replace('component:', '').split(',').join('、')).join('；');
+    message.textContent = data.applied.length
+      ? `已接用 ${data.applied.length} 组：${groups}。留待人工 ${data.deferred.length} 笔改层。`
+      : `调整均已接用，未重复生效。留待人工 ${data.deferred.length} 笔改层。`;
+    if (data.applied.length) setTimeout(() => location.reload(), 900);
+  } catch (error) {
+    message.textContent = `${error.message}，可整批重试。`;
+  } finally { adopt.disabled = false; }
+});

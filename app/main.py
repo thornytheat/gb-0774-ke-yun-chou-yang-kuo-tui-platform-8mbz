@@ -5,6 +5,7 @@ from flask import Flask,jsonify
 from app.api import survey
 from app.config import PORT
 from app.errors import SurveyProblem
+from app.modules.adoption.store import ScheduleStore
 from app.modules.ledger.storage import Archive
 from app.web import workbench
 
@@ -12,7 +13,9 @@ from app.web import workbench
 def create_app(database=None):
     app=Flask(__name__)
     app.config['MAX_CONTENT_LENGTH']=2_000_000
-    app.extensions['survey_archive']=Archive(database or os.getenv('SURVEY_ARCHIVE','var/survey.db'))
+    filename=database or os.getenv('SURVEY_ARCHIVE','var/survey.db')
+    app.extensions['survey_archive']=Archive(filename)
+    app.extensions['survey_schedule']=ScheduleStore(filename)
     app.register_blueprint(survey)
     app.register_blueprint(workbench)
     app.register_error_handler(SurveyProblem,lambda e:(jsonify(code=e.code,message=str(e)),e.status))

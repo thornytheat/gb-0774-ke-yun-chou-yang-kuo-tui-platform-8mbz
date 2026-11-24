@@ -12,7 +12,8 @@
 2. 到班次与分层校验查票号 `00011` 改入枢纽，到非响应权重校准查基础权 3、校准后 50。
 3. 在扩推整数分配切换城北与枢纽，查看余数及补 1 的类别。
 4. 打开批次留档复跑，归档并复算。进入样本证据签发，下载带隔离行和规则版本的 JSON。
+5. 补正接用：在样本证据签发页选两份已签批次（原签发与补正签发），勾选已发车分层后先看接用方案，再办理接用。已发车分层保留原排班人数，无关分层照常接用；牵连已发车分层的改层留待人工，两端都未发车的改层整组一起生效。
 
-`GET /api/survey/<stage>` 执行样例阶段，阶段名见 [DEPTH](docs/DEPTH.md)。向同一路径 POST `{"tables":{"returns":"...","frame":"..."}}` 可复核自己的 CSV。`POST /api/runs` 提交同样的 `tables` 或 `{"sample":"dirty"}`。`GET /api/runs/<id>` 查档，`POST /api/runs/<id>/rerun` 复算，`GET /api/export/<id>` 领取证据。
+`GET /api/survey/<stage>` 执行样例阶段，阶段名见 [DEPTH](docs/DEPTH.md)。向同一路径 POST `{"tables":{"returns":"...","frame":"..."}}` 可复核自己的 CSV。`POST /api/runs` 提交同样的 `tables` 或 `{"sample":"dirty"}`。`GET /api/runs/<id>` 查档，`POST /api/runs/<id>/rerun` 复算，`GET /api/export/<id>` 领取证据。补正接用见 `GET|POST /api/adoption` 与 `GET|POST /api/schedule/<id>`。
 
 字段和计算规则详见 [数据字典](docs/DATA-DICTIONARY.md)。本机测试执行 `python -m pytest -q`。
